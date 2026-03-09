@@ -1,91 +1,195 @@
-# Full-Stack AI Intraday Trading App (NSE/BSE)
+# Tata Motors Dealership CRM
 
-Production-focused starter monorepo for a low-latency intraday/F&O trading platform with AI signal support and Angel One SmartAPI-ready execution flow.
+**Production-grade Digital Dealership Management System**
+Authorized Tata Motors Dealership · Jaipur, Rajasthan
 
-## Tech Stack
+---
 
-- **Frontend**: Next.js 14, TypeScript, TailwindCSS, Recharts (TradingView-ready placeholder)
-- **Backend**: FastAPI, SQLAlchemy, async HTTP integrations, WebSocket streaming
-- **Storage**: PostgreSQL + Redis
-- **Infra**: Docker + docker-compose
+## System Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     Frontend (Next.js 14)                     │
+│          Role-based dashboards · TypeScript · Tailwind        │
+└──────────────────────────┬───────────────────────────────────┘
+                           │ REST API (JWT)
+┌──────────────────────────▼───────────────────────────────────┐
+│                  Backend (FastAPI + Python 3.11)              │
+│        JWT Auth · RBAC · SQLAlchemy ORM · Pydantic            │
+└──────┬───────────────────┬──────────────────────┬────────────┘
+       │                   │                      │
+┌──────▼──────┐   ┌────────▼──────┐   ┌──────────▼─────┐
+│ PostgreSQL  │   │     Redis     │   │  File Storage  │
+│   (CRM DB)  │   │  (caching)    │   │ (docs/photos)  │
+└─────────────┘   └───────────────┘   └────────────────┘
+```
+
+## Staff Roles Supported (15 roles)
+
+| Role | Department | Key Access |
+|------|-----------|------------|
+| General Manager | Leadership | Full system + all dashboards |
+| Receptionist | Reception | Lead capture, walk-in, QR |
+| Sales Manager EV | Sales | EV team performance |
+| Sales Manager PV | Sales | PV team performance |
+| Team Leader (5) | Sales | Team monitoring, lead distribution |
+| Sales Consultant (25+) | Sales | Leads, quotations, bookings |
+| Finance Manager | Finance | Loan applications |
+| Accounts Officer | Finance | Invoice generation |
+| Cashier | Finance | Payment recording |
+| Accessories Manager | Accessories | Catalog, orders |
+| Telecalling Team | Customer Experience | Follow-ups, call logs |
+| Test Drive Coordinator | Vehicle Ops | Test drive scheduling |
+| Exchange Manager | Vehicle Ops | Old car valuation |
+| Insurance Manager | Vehicle Ops | Policy creation |
+| PDI Manager | Vehicle Ops | Pre-delivery inspection |
+
+## Customer Journey (15 Stages)
+
+1. **Reception** → Walk-in capture, QR lead, auto-assignment
+2. **Requirement Discovery** → Digital questionnaire + AI recommendations
+3. **Product Presentation** → Vehicle catalog with specs/variants
+4. **Quotation** → On-road price with GST breakup, PDF/WhatsApp share
+5. **Test Drive** → Scheduling, DL verification, feedback
+6. **Exchange Evaluation** → Inspection, photos, valuation approval
+7. **Booking** → KYC upload, payment, digital receipt
+8. **Finance** → Multi-bank loan applications, approval tracking
+9. **Insurance** → Multi-insurer comparison, add-on selection
+10. **Accessories** → OEM catalog, order management, billing link
+11. **Billing** → GST invoice (28%), multi-payment recording
+12. **Vehicle Allocation** → VIN-level stock tracking
+13. **PDI** → Digital inspection checklist, issue tracking
+14. **Delivery** → Prep checklist, customer sign-off, rating
+15. **Post-Delivery** → Auto-created Day 1/7/30 follow-up tasks
+
+## Quick Start
+
+```bash
+git clone <repo>
+cd sharemarket
+docker-compose up --build
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend CRM | http://localhost:3000 |
+| Backend API | http://localhost:8000/api/v1 |
+| Swagger Docs | http://localhost:8000/api/docs |
+
+## Demo Credentials (password: Tata@1234)
+
+| Role | Email |
+|------|-------|
+| General Manager | gm@tatadealer.in |
+| Receptionist | reception@tatadealer.in |
+| Sales Manager | sm.pv@tatadealer.in |
+| Team Leader | tl1@tatadealer.in |
+| Sales Consultant | sc1@tatadealer.in |
+| Finance Manager | finance@tatadealer.in |
+| Telecalling | telecall1@tatadealer.in |
+| PDI Manager | pdi@tatadealer.in |
 
 ## Project Structure
 
-```text
-backend/
-  app/
-    api/                # REST + WebSocket endpoints
-    services/           # Angel, market feeds, signal engine
-    models/             # SQLAlchemy models
-    schemas/            # Pydantic contracts
-  tests/
-frontend/
-  src/app/              # Next.js app router
-  src/components/       # Dashboard widgets
-infra/
-  schema.sql            # SQL bootstrap (optional)
+```
+sharemarket/
+├── backend/
+│   ├── app/
+│   │   ├── api/               # 17 route modules
+│   │   │   ├── auth.py
+│   │   │   ├── leads.py
+│   │   │   ├── vehicles.py
+│   │   │   ├── quotations.py
+│   │   │   ├── test_drives.py
+│   │   │   ├── exchange.py
+│   │   │   ├── bookings.py
+│   │   │   ├── finance.py
+│   │   │   ├── insurance.py
+│   │   │   ├── accessories.py
+│   │   │   ├── billing.py
+│   │   │   ├── pdi.py
+│   │   │   ├── delivery.py
+│   │   │   ├── followups.py
+│   │   │   ├── dashboard.py
+│   │   │   ├── requirements.py
+│   │   │   └── users.py
+│   │   ├── core/              # Config, security, JWT
+│   │   ├── db/                # SQLAlchemy session
+│   │   ├── models/            # 20 ORM models
+│   │   ├── schemas/           # Pydantic schemas
+│   │   ├── services/          # Business logic, EMI calc
+│   │   ├── seed.py            # Demo data seeder
+│   │   └── main.py            # FastAPI app entry
+│   ├── Dockerfile
+│   └── pyproject.toml
+├── frontend/
+│   └── src/
+│       ├── app/
+│       │   ├── login/         # Auth page
+│       │   ├── dashboard/     # Role-based dashboards
+│       │   ├── leads/         # Lead management
+│       │   ├── vehicles/      # Inventory
+│       │   ├── bookings/      # Bookings
+│       │   ├── test-drives/   # Test drive management
+│       │   ├── exchange/      # Exchange evaluation
+│       │   ├── finance/       # Loan applications
+│       │   ├── insurance/     # Insurance policies
+│       │   ├── accessories/   # Accessories catalog
+│       │   ├── billing/       # GST invoices
+│       │   ├── pdi/           # PDI checklist
+│       │   ├── deliveries/    # Delivery management
+│       │   ├── followups/     # Post-delivery follow-ups
+│       │   └── team/          # Staff management
+│       ├── components/
+│       │   └── Layout.tsx     # Sidebar navigation
+│       ├── lib/
+│       │   └── api.ts         # API client
+│       └── types/
+│           └── crm.ts         # TypeScript types
+├── infra/
+│   └── schema.sql
+└── docker-compose.yml
 ```
 
-## Key Features Implemented
+## Database (20 Tables)
 
-- Multi-source market data router with latency preference (Angel > Polygon > Alpaca > yFinance fallback mock)
-- WebSocket live tick streaming endpoint (`/api/v1/ws/market`)
-- Angel One order placement/portfolio/positions wrapper (paper fallback when keys absent)
-- AI signal engine with EMA(9/21/50), RSI, MACD, VWAP, Bollinger Bands
-- Intraday signal output including entry, SL, target, confidence, and risk-reward
-- Trading panel with one-click BUY/SELL order request
-- Portfolio snapshot and P&L surface
-- Dockerized local deployment
+- `users` – All staff (15 RBAC roles)
+- `leads` – Customer leads lifecycle
+- `customer_requirements` – Requirement discovery
+- `vehicles` – VIN-level stock inventory
+- `quotations` – On-road price quotations
+- `test_drives` – Test drive bookings
+- `exchange_vehicles` – Trade-in evaluation
+- `bookings` – Sales bookings + KYC
+- `finance_applications` – Bank loan tracking
+- `insurance_policies` – Policy management
+- `accessory_items` – Accessories catalog
+- `accessories_orders` – Accessory orders
+- `invoices` – GST invoices
+- `payments` – Payment records
+- `pdi_records` – Pre-delivery inspection
+- `deliveries` – Delivery scheduling
+- `follow_ups` – D1/D7/D30 auto tasks
+- `call_logs` – Telecalling history
+- `documents` – File metadata
+- `audit_logs` – System audit trail
 
-## Local Development
+## API Reference
 
-### 1) Start Infra + Services
+Full Swagger UI: `http://localhost:8000/api/docs`
 
-```bash
-docker compose up --build
-```
+## Technology Stack
 
-- Frontend: http://localhost:3000
-- Backend docs: http://localhost:8000/docs
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python 3.11, FastAPI, SQLAlchemy 2.0 |
+| Frontend | Next.js 14, TypeScript, Tailwind CSS 3 |
+| Database | PostgreSQL 16 |
+| Cache | Redis 7 |
+| Charts | Recharts |
+| Auth | JWT (python-jose, bcrypt) |
+| Containerization | Docker, Docker Compose |
 
-### 2) Backend only (without Docker)
+---
 
-```bash
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -e .
-cp .env.example .env
-uvicorn app.main:app --reload --port 8000
-```
-
-### 3) Frontend only (without Docker)
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## Angel One Integration Notes
-
-1. Fill `backend/.env` with `ANGEL_API_KEY`, `ANGEL_CLIENT_CODE`, `ANGEL_PIN`, `ANGEL_TOTP_SECRET`.
-2. Replace/extend auth session generation in `app/services/angel_client.py` according to SmartAPI session/token lifecycle.
-3. Keep live credentials in a secrets manager in production.
-
-## Security & Production Checklist
-
-- Add strict JWT auth middleware and role-based order permissions
-- Enforce HTTPS + secure CORS allowlist
-- Use Vault/SSM/KMS for secret storage
-- Add request rate limiting and circuit breaker on broker API calls
-- Add audit logs to centralized observability stack
-- Add canary or dry-run mode before enabling live order routing
-
-## Future Expansion Hooks
-
-- Automated strategy worker + scheduler
-- Telegram alert integration
-- Reinforcement learning policy experimentation pipeline
-- Full options chain analytics (PCR/OI/strike selection UI + API)
-
-> **Risk Disclaimer**: This project is an engineering starter and not financial advice. Validate every strategy with paper trading and strict risk controls before live execution.
+© 2024 Tata Motors Authorized Dealership, Jaipur, Rajasthan

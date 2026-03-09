@@ -5,10 +5,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: '#0f172a',
-        panel: '#1e293b',
-        accent: '#22c55e'
-      }
+        'tata-blue': '#1b4f9c',
+        'tata-dark': '#0f3370',
+        'tata-red': '#e8211e',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
     }
   },
   plugins: []
