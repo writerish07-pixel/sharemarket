@@ -38,21 +38,17 @@ def generate_invoice(
     )
     insurance = db.query(InsurancePolicy).filter(InsurancePolicy.booking_id == booking.id).first()
     acc_order = db.query(AccessoriesOrder).filter(AccessoriesOrder.booking_id == booking.id).first()
+    from app.models.crm import Lead
     exchange = (
         db.query(ExchangeVehicle)
-        .join(from_clause := __import__("app.models.crm", fromlist=["Lead"]).Lead,
-              ExchangeVehicle.lead_id == from_clause.id)
-        .filter(from_clause.id == booking.lead_id)
+        .join(Lead, ExchangeVehicle.lead_id == Lead.id)
+        .filter(Lead.id == booking.lead_id)
         .first()
-        if False else None  # simplified — attach exchange via booking
     )
     finance = db.query(FinanceApplication).filter(FinanceApplication.booking_id == booking.id).first()
     vehicle = db.query(Vehicle).filter(Vehicle.vin == booking.vin).first() if booking.vin else None
 
-    # GST calculation
-    taxable = (booking.ex_showroom_price or Decimal("0")) - (payload.discount or Decimal("0"))
-    # Use a simplified single ex_showroom from booking; in prod, read from quotation
-    # Fallback to quotation price
+    # GST calculation — read ex_showroom from the active quotation
     from app.models.crm import Quotation
     quote = (
         db.query(Quotation)
@@ -70,10 +66,10 @@ def generate_invoice(
     rto = quote.rto_charges if quote else Decimal("0")
     warranty = quote.extended_warranty if quote else Decimal("0")
 
-    total = ex_showroom + cgst + sgst + rto + insurance_amt + acc_amt + warranty - (payload.discount or 0)
+    total = ex_showroom + cgst + sgst + rto + insurance_amt + acc_amt + warranty - (payload.discount or Decimal("0"))
     exchange_deduction = Decimal("0")   # handled separately if exchange approved
     loan_amt = Decimal(str(finance.loan_amount)) if finance else Decimal("0")
-    balance = total - (booking.booking_amount or 0) - exchange_deduction - loan_amt
+    balance = total - (booking.booking_amount or Decimal("0")) - exchange_deduction - loan_amt
 
     invoice = Invoice(
         invoice_number=generate_invoice_number(db),

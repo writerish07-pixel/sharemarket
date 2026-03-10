@@ -245,3 +245,17 @@ export const requirementsApi = {
     request<any>('/requirements', { method: 'POST', body: JSON.stringify(data) }),
   get: (leadId: number) => request<any>(`/requirements/${leadId}`),
 };
+
+// ─────────────────── Trading ─────────────────────────────────────────────────
+export async function placeOrder(data: {
+  symbol: string;
+  side: string;
+  quantity: number;
+  order_type: string;
+  product_type?: string;
+}) {
+  return request<any>('/trading/order', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}

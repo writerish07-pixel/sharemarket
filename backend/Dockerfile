@@ -8,9 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml /app/
-RUN pip install --no-cache-dir .
-
 COPY app /app/app
+RUN pip install --no-cache-dir .
 
 # Create uploads directory
 RUN mkdir -p /app/uploads

@@ -5,6 +5,7 @@ from app.api import (
     auth, users, leads, requirements, vehicles, quotations,
     test_drives, exchange, bookings, finance, insurance,
     accessories, billing, pdi, delivery, followups, dashboard,
+    trading,
 )
 
 router = APIRouter()
@@ -26,6 +27,7 @@ router.include_router(pdi.router)
 router.include_router(delivery.router)
 router.include_router(followups.router)
 router.include_router(dashboard.router)
+router.include_router(trading.router)
 
 
 @router.get("/health")
