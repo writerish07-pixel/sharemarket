@@ -53,6 +53,10 @@ class Settings(BaseSettings):
     dealership_phone: str = "+91-141-XXXXXXX"
     dealership_address: str = "Plot No. XYZ, Tonk Road, Jaipur – 302015"
 
+    # AngelOne Trading API
+    angel_api_key: str = ""
+    angel_client_code: str = ""
+
     # CORS
     allowed_origins: List[str] = ["http://localhost:3000", "http://frontend:3000"]
 

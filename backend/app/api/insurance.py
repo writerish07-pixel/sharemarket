@@ -1,6 +1,7 @@
 """Insurance policy management."""
 
 from typing import List
+from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
@@ -49,7 +50,7 @@ def create_policy(
     if current_user.role not in [UserRole.INSURANCE_MANAGER, UserRole.GENERAL_MANAGER]:
         raise HTTPException(403, "Only Insurance Manager can create policies")
 
-    total = (payload.premium_amount or 0) + (payload.addon_premium or 0)
+    total = (payload.premium_amount or Decimal("0")) + (payload.addon_premium or Decimal("0"))
     policy = InsurancePolicy(
         **payload.model_dump(),
         total_premium=total,
