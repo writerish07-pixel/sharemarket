@@ -11,7 +11,7 @@ from sqlalchemy import (
     Column, Integer, String, Text, Float, Boolean, DateTime, Enum,
     ForeignKey, JSON, Date, Numeric, BigInteger,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
 from app.db.session import Base
 
@@ -171,7 +171,7 @@ class User(Base):
     updated_at   = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    team_members  = relationship("User", foreign_keys=[team_leader_id], backref="team_leader", lazy="dynamic")
+    team_members  = relationship("User", foreign_keys=[team_leader_id], backref=backref("team_leader", remote_side="User.id"), lazy="dynamic")
     leads_assigned = relationship("Lead", foreign_keys="Lead.assigned_consultant_id", back_populates="consultant")
     leads_created  = relationship("Lead", foreign_keys="Lead.created_by_id", back_populates="created_by")
     audit_logs     = relationship("AuditLog", back_populates="user")
